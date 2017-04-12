@@ -1496,7 +1496,7 @@ static inline int zz_get_next_freq(unsigned int curfreq, unsigned int updown, un
 
 #ifdef ENABLE_HOTPLUGGING
 // ZZ: function for enabling/disabling cores from offline/online state
-static inline void __cpuinit enable_disable_cores(void)
+static inline void enable_disable_cores(void)
 {
 	int i = 0;
 
@@ -3066,8 +3066,9 @@ static ssize_t store_sampling_rate_idle_delay(struct kobject *a, struct attribut
 #endif /* ENABLE_PROFILES_SUPPORT */
 	    return -EINVAL;
 
-	if (input == 0)
+	if (input == 0){
 	    sampling_rate_step_up_delay = 0;
+	    }
 	    sampling_rate_step_down_delay = 0;
 
 #ifdef ENABLE_PROFILES_SUPPORT
@@ -7791,9 +7792,9 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 #endif /* ENABLE_SNAP_THERMAL_SUPPORT */
 
 	    // ZZ: Sampling down momentum - if momentum is inactive switch to 'down_skip' method
-	    if (zz_sampling_down_max_mom == 0 && zz_sampling_down_factor > 1)
+	    if (zz_sampling_down_max_mom == 0 && zz_sampling_down_factor > 1){
 		this_dbs_info->down_skip = 0;
-
+		}
 		// ZZ: Frequency Limit: if we are at freq_limit break out early
 		if (dbs_tuners_ins.freq_limit != 0
 			&& policy->cur == dbs_tuners_ins.freq_limit) {
@@ -7814,9 +7815,9 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		return;
 
 	    // ZZ: Sampling down momentum - if momentum is active and we are switching to max speed, apply sampling_down_factor
-	    if (zz_sampling_down_max_mom != 0 && policy->cur < policy->max)
+	    if (zz_sampling_down_max_mom != 0 && policy->cur < policy->max){
 		this_dbs_info->rate_mult = zz_sampling_down_factor;
-
+		}
 		this_dbs_info->requested_freq = zz_get_next_freq(policy->cur, 1, max_load);
 
 		if (dbs_tuners_ins.freq_limit != 0
@@ -8186,7 +8187,7 @@ static void tmu_check_work(struct work_struct * work_tmu_check)
 
 // ZZ: function for hotplug down work
 #ifdef ENABLE_HOTPLUGGING
-static void __cpuinit hotplug_offline_work_fn(struct work_struct *work)
+static void hotplug_offline_work_fn(struct work_struct *work)
 {
 	int cpu;	// ZZ: for hotplug down loop
 
@@ -8281,7 +8282,7 @@ static void __cpuinit hotplug_offline_work_fn(struct work_struct *work)
 }
 
 // ZZ: function for hotplug up work
-static void __cpuinit hotplug_online_work_fn(struct work_struct *work)
+static void hotplug_online_work_fn(struct work_struct *work)
 {
 	int i = 0;	// ZZ: for hotplug up loop
 
@@ -8483,9 +8484,9 @@ static inline void dbs_timer_exit(struct cpu_dbs_info_s *dbs_info)
 #if (defined(CONFIG_HAS_EARLYSUSPEND) || defined(CONFIG_POWERSUSPEND) && !defined(DISABLE_POWER_MANAGEMENT)) || defined(USE_LCD_NOTIFIER)
 // raise sampling rate to SR*multiplier and adjust sampling rate/thresholds/hotplug/scaling/freq limit/freq step on blank screen
 #if defined(CONFIG_HAS_EARLYSUSPEND) && !defined(USE_LCD_NOTIFIER)
-static void __cpuinit powersave_early_suspend(struct early_suspend *handler)
+static void powersave_early_suspend(struct early_suspend *handler)
 #elif defined(CONFIG_POWERSUSPEND) && !defined(USE_LCD_NOTIFIER) || defined(CONFIG_POWERSUSPEND) && defined(USE_LCD_NOTIFIER)
-static void __cpuinit powersave_suspend(struct power_suspend *handler)
+static void powersave_suspend(struct power_suspend *handler)
 #elif defined(USE_LCD_NOTIFIER)
 void zzmoove_suspend(void)
 #endif /* defined(CONFIG_HAS_EARLYSUSPEND)... */
@@ -8675,9 +8676,9 @@ void zzmoove_suspend(void)
 }
 
 #if defined(CONFIG_HAS_EARLYSUSPEND) && !defined(USE_LCD_NOTIFIER)
-static void __cpuinit powersave_late_resume(struct early_suspend *handler)
+static void powersave_late_resume(struct early_suspend *handler)
 #elif defined(CONFIG_POWERSUSPEND) && !defined(USE_LCD_NOTIFIER) || defined(CONFIG_POWERSUSPEND) && defined(USE_LCD_NOTIFIER)
-static void __cpuinit powersave_resume(struct power_suspend *handler)
+static void powersave_resume(struct power_suspend *handler)
 #elif defined(USE_LCD_NOTIFIER)
 void zzmoove_resume(void)
 #endif /* defined(CONFIG_HAS_EARLYSUSPEND)... */
@@ -8849,9 +8850,9 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		    unsigned int latency;
 		    // policy latency is in nS. Convert it to uS first
 		    latency = policy->cpuinfo.transition_latency / 1000;
-		    if (latency == 0)
+		    if (latency == 0){
 			latency = 1;
-
+			}
 			rc = sysfs_create_group(cpufreq_global_kobject,
 						&dbs_attr_group);
 			if (rc) {
